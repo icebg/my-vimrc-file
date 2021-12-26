@@ -6,11 +6,13 @@ colorscheme molokai	"设置配色方案，在~/.vim/colors/目录下提前放置
 noremap <Leader>tag :call Ctag()<CR>
 func! Ctag()
 	if &filetype == 'c'
-		exec "!ctags -R  --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+liaS --extras=+q" 
+		exec "silent :!ctags -R --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+liaS --extras=+q" 
 	elseif &filetype == 'cpp'
-		exec "!ctags -R  --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+liaS --extras=+q" 
+		exec "silent :!ctags -R --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+liaS --extras=+q" 
 	endif
+endif
 endfunc
+
 
 "C，C++ 按分号e编译运行
 noremap <Leader>e :call CompileRunGcc()<CR>
@@ -65,7 +67,7 @@ noremap <leader>bd <esc>:bd<cr>
 noremap <leader>cv <esc>:tabnew $MYVIMRC<cr>
 " 使用;p快捷键开启 paste。;;p关闭paste。默认关闭paste模式
 set nopaste
-noremap <Leader>p :set paste<CR>
+noremap <Leader>p :set paste<CR>i
 noremap <Leader><Leader>p :set nopaste<CR>
 " 使用;q快捷键退出vim
 nnoremap <Leader>q :q<CR>
@@ -188,14 +190,16 @@ set history=1000	" 历史记录数
 set fileencodings=utf-8,gbk,cp936,gb18030,big5,euc-jp,euc-kr,latin1 "中文编码支持(gbk/cp936/gb18030)---Vim 启动时逐一按顺序使用第一个匹配到的编码方式打开文件
 "set encoding=gbk	" Vim 内部 buffer (缓冲区)、菜单文本等使用的编码方式 :告诉Vim 你所用的字符的编码
 "禁止生成临时文件
-set nobackup	"禁止自动生成 备份文件 
+set nobackup	"禁止自动生成 备份文件
 set noswapfile	"禁止自动生成 swap文件
 set noundofile	"禁止 gvim 在自动生成 undo 文件 *.un~
-set tabstop=4	"按下Tab键时,键入的字符宽度
-" 统一缩进为4
-set softtabstop=4	"自动将文本中的Tab转化为4个空格
-set shiftwidth=4	" 使得按退格键时可以一次删掉4个空格,每次>>缩进偏移4个。
-set noexpandtab		" 不要将制表符tab展开成空格
+set tabstop=4	"按下Tab键时,键入的tab字符显示宽度。 统一缩进为4
+set shiftwidth=4	"每次>>缩进偏移4个。(自动缩进时，变化的宽度4为单位)
+set softtabstop=4 "自动将键入的Tab转化为空格(宽度未达到tabstop)。或者正常输入tab(宽度达到tabstop)。
+" 设置softtabstop有一个好处是可以用Backspace键来一次删除4个空格.
+" softtabstop的值为负数,会使用shiftwidth的值,两者保持一致,方便统一缩进.
+
+set noexpandtab		" 不要将制表符tab展开成空格。expandtab 选项把插入的 tab 字符替换成特定数目的空格。具体空格数目跟 tabstop 选项值有关
 "自动补全（字典方式）----使用ctrl+x ctrl+k 进行字典补全
 set dictionary+=/usr/share/dict/english.dict
 "直接CTRL+n就显示dict其中的列表
@@ -276,10 +280,10 @@ augroup global
 			call append(line("."), "CFLAGS+=-Wall -g")
 			call append(line(".")+1, "CXX=g++")
 			call append(line(".")+2, "CC=gcc")
-			call append(line(".")+3, "main: xxx.o xxx.o")
+			call append(line(".")+3, "%.o: %.c")
 			call append(line(".")+4, "	$(CXX) $(CPPFLAGS) $^ -o  $@")
 			call append(line(".")+5, "clean:")
-			call append(line(".")+6, "	rm  main *.o -rf")
+			call append(line(".")+6, "	rm  main.exe *.o -rf")
 
 		elseif &filetype == 'python'
 			call setline(1,"#!/usr/bin/env python")
@@ -367,7 +371,7 @@ set statusline+=\ [len=%L] "lenth of lines
 " FileType settings ----------{{{
 augroup c_cpp_
 	autocmd!
-	autocmd FileType c,cpp setlocal tabstop=4|setlocal shiftwidth=4|setlocal noexpandtab
+	autocmd FileType c,cpp setlocal tabstop=4|setlocal shiftwidth=4|setlocal softtabstop=4|setlocal noexpandtab
 	autocmd FileType c,cpp setlocal cindent 
 
 	autocmd FileType c,cpp setlocal foldmethod=marker
@@ -379,7 +383,7 @@ augroup c_cpp_
 	autocmd FileType cpp iabbrev <buffer>		yfpp #include<cstdio><cr>#include<cmath><cr>#include<iostream><cr>int main()<cr>{<cr>using std::cout;<cr>return 0;<cr>}<esc>kO<esc>i   
 
 	autocmd FileType c,cpp iabbrev <buffer>		ifndef #ifndef<cr>#define<cr>#endif
-	autocmd FileType c,cpp iabbrev <buffer>		fori for(i=0;i<strlen();i++)<cr>{<cr>}<esc>O<esc>i       
+	autocmd FileType c,cpp iabbrev <buffer>		fori for(int i=0;i<;++i)<cr>{<cr>}<esc>O
 	autocmd FileType c,cpp iabbrev <buffer>		structt struct<cr>{<cr>};<esc>O<esc>i   
 	autocmd FileType c,cpp iabbrev <buffer>		printt printf("",);<left><left><left>
 	autocmd FileType c,cpp iabbrev <buffer>		scann scanf("",);
@@ -425,7 +429,7 @@ augroup python_
 	autocmd FileType python iabbrev <buffer> iff if:<left>
 	autocmd FileType python iabbrev <buffer> printt print("")<left><left>
 	"只在编辑python类型的文件时展开 tab为空格
-	autocmd FileType python setlocal tabstop=4|setlocal shiftwidth=4|setlocal expandtab
+	autocmd FileType python setlocal tabstop=4|setlocal shiftwidth=4|setlocal softtabstop=4|setlocal expandtab
 	"python注释(comment)快捷键：-c
 	autocmd FileType python,sh nnoremap <buffer> <localleader>c I#<esc>
 augroup END
