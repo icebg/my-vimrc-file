@@ -206,6 +206,7 @@ set dictionary+=/usr/share/dict/english.dict
 set complete-=k complete+=k
 set autoread	"打开文件监视。如果在编辑过程中文件发生外部改变（比如被别的编辑器编辑了），就会发出提示。
 set timeoutlen=500	"以毫秒计的,等待键码或映射的键序列完成的时间
+set tags+=/usr/include/tags
 " }}}
 "abbreviate缩写替换----------{{{
 "替换内容纠正笔误，如果想取消替换，那么iunabbrev main(即修正后的单词) 
