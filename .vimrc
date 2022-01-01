@@ -19,9 +19,9 @@ noremap <Leader>e :call CompileRunGcc()<CR>
 func! CompileRunGcc()
 	exec "w"
 	if &filetype == 'c'
-		exec "!gcc -Wall % -o %:r && ./%:r && rm ./%:r"  
+		exec "!gcc -Wall % -o %:r && ./%:r "  
 	elseif &filetype == 'cpp'
-		exec "!g++ -Wall % -o %:r && ./%:r && rm ./%:r"  
+		exec "!g++ -Wall % -o %:r && ./%:r "  
 	elseif &filetype == 'sh'
 		exec "!. %"	
 		"在当前bash执行此脚本
@@ -46,7 +46,7 @@ func! ToShell()
 	exec "w"
 	exec ":shell"
 endfunc
-"-------------------以下与gvim和vim无关----------------------
+"-------------------以下与gvim和vim无关(上面的是我在linux上的设置，上面的不要变动。)----------------------
 "yes!the former partion still here in _vimrc successfully![[[[former]]]]
 "yes!the latter partion trans successfully![[[[latter]]]]
 "目前我的vim个人配置文件
@@ -264,7 +264,7 @@ augroup global
 			call append(line(".")+1, "\# Author: Yufeng Huang <icebggg@qq.com>")
 			call append(line(".")+2, "\# Created Time: ".strftime("%c"))
 			call append(line(".")+3, "\#########################################################################")
-			call append(line(".")+4, "\#!/bin/bash")
+			call append(line(".")+4, "\#! /bin/bash")
 			call append(line(".")+5, "")
 
 		elseif &filetype == 'c'
@@ -442,7 +442,8 @@ augroup javascript
 augroup END
 augroup shell_
 	autocmd!
-	autocmd FileType sh iabbrev <buffer> yfsh #!/bin/bash<cr>
+	autocmd FileType sh iabbrev <buffer> yfsh #! /bin/bash<cr>
+	autocmd FileType sh iabbrev <buffer> iff if []; then<cr><cr>fi<esc>2kf]i
 augroup END
 " }}}
 
@@ -467,6 +468,7 @@ if(has("gui_running"))
 	set guioptions-=m "去掉菜单栏
 	"set guifont=Bitstream\ Vera\ Sans\ Mono:h12
 	set guifont=Cr.DejaVuSansMono.YaHei:h12
+	set tags+=D:/MinGW/lib/gcc/mingw32/6.3.0/include/tags
 endif
 "}}}
 
