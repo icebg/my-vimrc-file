@@ -19,9 +19,9 @@ noremap <Leader>e :call CompileRunGcc()<CR>
 func! CompileRunGcc()
 	exec "w"
 	if &filetype == 'c'
-		exec "!gcc -Wall % -o %:r && ./%:r "  
+		exec "!gcc -Wall -g  % -o %:r && ./%:r "  
 	elseif &filetype == 'cpp'
-		exec "!g++ -Wall % -o %:r && ./%:r "  
+		exec "!g++ -Wall -g  % -o %:r && ./%:r "  
 	elseif &filetype == 'sh'
 		exec "!. %"	
 		"在当前bash执行此脚本
