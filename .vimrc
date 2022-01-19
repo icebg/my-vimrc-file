@@ -385,6 +385,7 @@ augroup c_cpp_
 
 	autocmd FileType c,cpp iabbrev <buffer>		ifndef #ifndef<cr>#define<cr>#endif
 	autocmd FileType c,cpp iabbrev <buffer>		fori for(int i=0;i<;++i)<cr>{<cr>}<esc>O
+	autocmd FileType c,cpp iabbrev <buffer>		forj for(int j=0;j<;++j)<cr>{<cr>}<esc>O
 	autocmd FileType c,cpp iabbrev <buffer>		structt struct<cr>{<cr>};<esc>O<esc>i   
 	autocmd FileType c,cpp iabbrev <buffer>		printt printf("",);<left><left><left>
 	autocmd FileType c,cpp iabbrev <buffer>		scann scanf("",);
