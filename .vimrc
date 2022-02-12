@@ -34,6 +34,12 @@ noremap <leader>bd <esc>:bd<cr>
 " "C"hange "V"imrc"的首字母,竖直分屏，打开.vimrc进行编辑,记
 "noremap <leader>cv <esc>:vsplit $MYVIMRC<cr>
 noremap <leader>cv <esc>:tabnew $MYVIMRC<cr>
+"分号obj 对源码进行编译，生成目标文件，并且objdump -dS 文件
+noremap <Leader>obj :call ObjDump()<CR>
+func! ObjDump()
+	exec "w"
+	exec ":!g++ -g -c % && objdump -dS %:r.o"
+endfunc
 " 使用;p快捷键开启 paste。;;p关闭paste。默认关闭paste模式
 set nopaste
 noremap <Leader>p :set paste<CR>i
