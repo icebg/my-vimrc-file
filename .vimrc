@@ -1,19 +1,5 @@
 colorscheme molokai	"设置配色方案，在~/.vim/colors/目录下提前放置molokai.vim.至于gvim我喜欢motus, ubuntu的vim我喜欢default，vsvim我喜欢web13234.vssettings
 "----------------------------------------
-"利用C:\Windows\ctags.exe在当前目录下生成详细tag文件的命令：ctags -R --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+liaS --extras=+q
-"有了ctag以后，ctrl+] 进入函数定义，ctrl+o 回退
-"生成 并更新tag文件
-noremap <Leader>tag :call Ctag()<CR>
-func! Ctag()
-	if &filetype == 'c'
-		exec "silent :!ctags -R --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+liaS --extras=+q" 
-	elseif &filetype == 'cpp'
-		exec "silent :!ctags -R --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+liaS --extras=+q" 
-	endif
-endif
-endfunc
-
-
 "C，C++ 按分号e编译运行
 noremap <Leader>e :call CompileRunGcc()<CR>
 func! CompileRunGcc()
@@ -28,23 +14,6 @@ func! CompileRunGcc()
 	elseif &filetype == 'python'
 		exec "!python %"
 	endif
-endfunc
-"分号d 编译
-noremap <Leader>d :call CompileDebug()<CR>
-func! CompileDebug()
-	exec "w"
-	exec "!g++ -Wall -g % -o %:r && gdb %:r"
-endfunc
-"分号m 执行makefile
-noremap <Leader>m :call Make()<CR>
-func! Make()
-	exec "!make;"
-endfunc
-"分号sh 进入shell
-noremap <Leader>sh :call ToShell()<CR>
-func! ToShell()
-	exec "w"
-	exec ":shell"
 endfunc
 "-------------------以下与gvim和vim无关(上面的是我在linux上的设置，上面的不要变动。)----------------------
 "yes!the former partion still here in _vimrc successfully![[[[former]]]]
@@ -83,6 +52,22 @@ nnoremap <space> viw
 vnoremap <space> vviW
 " "S"ource "V"imrc"的首字母，表示重读vimrc配置文件。
 nnoremap <leader>sv <esc>:source $MYVIMRC<cr>
+"分号sh 进入shell
+noremap <Leader>sh :call IntoShell()<CR>
+func! IntoShell()
+	exec "w"
+	exec ":shell"
+endfunc
+"分号tag 生成 并更新tag文件 "有了ctag以后，ctrl+] 进入函数定义，ctrl+o 回退。 
+noremap <Leader>tag :call Ctag()<CR>
+func! Ctag()
+		if &filetype == 'c'
+			exec "silent :!ctags -R --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+liaS --extras=+q" 
+		elseif &filetype == 'cpp'
+			exec "silent :!ctags -R --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+liaS --extras=+q" 
+		endif
+	endif
+endfunc
 " 使用;w快捷键保存内容
 nnoremap <Leader>w :w<CR>
 inoremap <Leader>w <ESC>:w<CR>
@@ -117,15 +102,13 @@ inoremap <silent><s-tab> <Esc>:tabprevious<CR>
 nnoremap <silent><Tab>q :tabclose<CR>	"退出标签
 nnoremap <silent><Tab>n :tabnext<CR>	"下一个标签页
 nnoremap <silent><Tab>p :tabprevious<CR>	"上一个标签页
-
-
 " }}}
 " <Leader>映射已经使用的快捷键说明----------{{{
 "+ 1 2 3 4 5 6 7 8 9 0                              访问第几个tab标签页
 "+ a												"A"ll selected
 "+ bd												"B"uffer "D"elete
 "+ cv												"C"hange "V"imrc
-"+ d												"D"ebug 函数
+"+ 
 "+ e												"E"xecute (编译执行) 函数
 "+
 "+
@@ -134,7 +117,7 @@ nnoremap <silent><Tab>p :tabprevious<CR>	"上一个标签页
 "+
 "+
 "+
-"+ m												"M"ake 函数
+"+ 
 "+
 "+
 "+ 
@@ -207,7 +190,6 @@ set complete-=k complete+=k
 set autoread	"打开文件监视。如果在编辑过程中文件发生外部改变（比如被别的编辑器编辑了），就会发出提示。
 set timeoutlen=500	"以毫秒计的,等待键码或映射的键序列完成的时间
 set tags+=/usr/include/tags
-set tags+=/usr/include/c++/5
 " }}}
 "abbreviate缩写替换----------{{{
 "替换内容纠正笔误，如果想取消替换，那么iunabbrev main(即修正后的单词) 
@@ -430,6 +412,8 @@ augroup END
 augroup python_
 	autocmd!
 	autocmd FileType python iabbrev <buffer> iff if:<left>
+	autocmd FileType python iabbrev <buffer> else else:
+	autocmd FileType python iabbrev <buffer> fori for i in range(n):
 	autocmd FileType python iabbrev <buffer> printt print("")<left><left>
 	"只在编辑python类型的文件时展开 tab为空格
 	autocmd FileType python setlocal tabstop=4|setlocal shiftwidth=4|setlocal softtabstop=4|setlocal expandtab
@@ -440,7 +424,9 @@ augroup javascript
 	autocmd!
 	autocmd FileType javascript iabbrev <buffer> iff if ()<left>
 	"javasript注释(comment)快捷键：-c
-	autocmd FileType javasript nnoremap <buffer> <localleader>c I//<esc>
+	autocmd FileType javascript nnoremap <buffer> <localleader>c I//<esc>
+	autocmd FileType javascript setlocal foldmethod=marker | setlocal foldmarker=@hyf,fyh@ 
+	autocmd BufReadPre *.js setlocal foldlevelstart=0
 augroup END
 augroup shell_
 	autocmd!
@@ -461,16 +447,22 @@ if(has("gui_running"))
 	func! GDB()
 		exec "Termdebug %:r"
 	endfunc
+	"分号sh 进入shell
+	noremap <Leader>sh :call IntoShell()<CR>
+	func! IntoShell()
+		exec "w"
+		exec "terminal"
+	endfunc
 	"行距 linespace
 	set linespace=4
-	set shell=powershell
+	set shell=pwsh
 	colorscheme motus "设置配色方案，在~/.vim/colors/目录下提前放置molokai.vim.至于gvim我喜欢motus, ubuntu的vim我喜欢default,molokai，vsvim我喜欢web13234.vssettings
 	autocmd BufReadPost *.txt exe ": colorscheme Autumn2"|setlocal linespace=10
 	set guioptions-=T "去掉工具栏
 	set guioptions-=m "去掉菜单栏
 	"set guifont=Bitstream\ Vera\ Sans\ Mono:h12
 	set guifont=Cr.DejaVuSansMono.YaHei:h12
-	set tags+=D:/MinGW/lib/gcc/mingw32/6.3.0/include/tags
+	set tags+=D:/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/tags
 endif
 "}}}
 
