@@ -1,4 +1,9 @@
 colorscheme molokai	"设置配色方案，在~/.vim/colors/目录下提前放置molokai.vim.至于gvim我喜欢motus, ubuntu的vim我喜欢default，vsvim我喜欢web13234.vssettings
+call plug#begin('~/vimfiles/plugged') "这里规定安装目录,中间各行代表获取的插件
+"Plug 'preservim/nerdtree'
+Plug 'gauteh/vim-cppman'
+Plug 'octol/vim-cpp-enhanced-highlight'
+call plug#end()
 "----------------------------------------
 "C，C++ 按分号e编译运行
 noremap <Leader>e :call CompileRunGcc()<CR>
@@ -67,12 +72,12 @@ endfunc
 "分号tag 生成 并更新tag文件 "有了ctag以后，ctrl+] 进入函数定义，ctrl+o 回退。 
 noremap <Leader>tag :call Ctag()<CR>
 func! Ctag()
-		if &filetype == 'c'
-			exec "silent :!ctags -R --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+liaS --extras=+q" 
-		elseif &filetype == 'cpp'
-			exec "silent :!ctags -R --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+liaS --extras=+q" 
-		endif
+	if &filetype == 'c'
+		exec "silent :!ctags -R --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+liaS --extras=+q" 
+	elseif &filetype == 'cpp'
+		exec "silent :!ctags -R --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+liaS --extras=+q" 
 	endif
+endif
 endfunc
 " 使用;w快捷键保存内容
 nnoremap <Leader>w :w<CR>
