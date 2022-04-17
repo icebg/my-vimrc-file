@@ -110,9 +110,9 @@ nnoremap <Leader>9 9gt
 nnoremap <Leader>0 :tablast<CR>	"最后一个标签页
 nnoremap <silent><s-tab> :tabprevious<CR>	"上一个标签页
 inoremap <silent><s-tab> <Esc>:tabprevious<CR>	
-nnoremap <silent><Tab>q :tabclose<CR>	"退出标签
 nnoremap <silent><Tab>n :tabnext<CR>	"下一个标签页
 nnoremap <silent><Tab>p :tabprevious<CR>	"上一个标签页
+nnoremap <silent><Tab>q :tabclose<CR>	"退出标签
 " }}}
 " <Leader>映射已经使用的快捷键说明----------{{{
 "+ 1 2 3 4 5 6 7 8 9 0                              访问第几个tab标签页
