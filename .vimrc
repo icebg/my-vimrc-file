@@ -3,7 +3,7 @@ call plug#begin('~/vimfiles/plugged') "这里规定安装目录,中间各行代�
 "Plug 'preservim/nerdtree'
 Plug 'gauteh/vim-cppman'
 Plug 'octol/vim-cpp-enhanced-highlight'
-call plug#end()
+call plug#end() 
 "----------------------------------------
 "C，C++ 按分号e编译运行
 noremap <Leader>e :call CompileRunGcc()<CR>
