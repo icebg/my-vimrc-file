@@ -350,7 +350,6 @@ augroup c_cpp__
 
 	"c,cpp注释(comment)快捷键：-c
 	autocmd FileType c,cpp nnoremap <buffer> <localleader>c I//<esc>
-	autocmd FileType c,cpp  call LeetCode()
 augroup END
 augroup python_
 	autocmd!
@@ -411,21 +410,22 @@ if(has("gui_running"))
 	if(has("win32") || has("win95") || has("win64") || has("win7") || has("win10"))
 		source $VIMRUNTIME/delmenu.vim
 		source $VIMRUNTIME/menu.vim
-	endif
-	"set guifont=Bitstream\ Vera\ Sans\ Mono:h12
-	set guifont=Cr.DejaVuSansMono.YaHei:h12
-	set tags+=D:/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/tags
-	set tags+=D:/MinGW/mingw64/x86_64-w64-mingw32/include/tags
-	function! LeetCode()
-		" 这个c,cpp文件是新建的话，那就要做以下步骤 清空。
-		if file_readable(expand("%"))==0
-			if file_readable("initial_codes.cpp")&&file_readable("leetcode_script.vim")
-				silent source leetcode_script.vim
-			else
-				execute "normal ggdG"
+
+		set tags+=D:/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/tags
+		set tags+=D:/MinGW/mingw64/x86_64-w64-mingw32/include/tags
+		function! LeetCode()
+			" 这个c,cpp文件是新建的话，那就要做以下步骤 清空。
+			if file_readable(expand("%"))==0
+				if file_readable("initial_codes.cpp")&&file_readable("leetcode_script.vim")
+					silent source leetcode_script.vim
+				else
+					execute "normal ggdG"
+				endif
 			endif
-		endif
-	endfunction
+		endfunction
+		autocmd FileType c,cpp  call LeetCode()
+	endif
+	set guifont=Cr.DejaVuSansMono.YaHei:h12
 endif
 "}}}
 
