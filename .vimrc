@@ -8,13 +8,6 @@ else
 	let g:isLinux = 1
 endif
 "}}}
-"  < 判断是终端还是 Gvim > {{{
-" -----------------------------------------------------------------------------
-let g:isGUI = 0
-if has("gui_running")
-	let g:isGUI = 1
-endif
-"}}}
 " < Linux 专用设置 >  {{{
 " -----------------------------------------------------------------------------
 "C，C++ 按分号e编译运行
@@ -41,7 +34,7 @@ if(isWindows)
 	"弄一弄windows下tag路径
 	set tags+=D:/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/tags
 	set tags+=D:/MinGW/mingw64/x86_64-w64-mingw32/include/tags
-	" window里刷LeetCode题
+	" windows里刷LeetCode题
 	function! LeetCode()
 		" 这个c,cpp文件是新建的话，那就要做以下步骤 清空。
 		if file_readable(expand("%"))==0
@@ -72,6 +65,53 @@ if(isWindows)
 			exec "! %"
 		endif
 	endfunc
+	"下面是gvim配置的开头默认代码
+	" Vim with all enhancements
+	source $VIMRUNTIME/vimrc_example.vim
+	" Use the internal diff if available.
+	" Otherwise use the special 'diffexpr' for Windows.
+	if &diffopt !~# 'internal'
+		set diffexpr=MyDiff()
+	endif
+	function MyDiff()
+		let opt = '-a --binary '
+		if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+		if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+		let arg1 = v:fname_in
+		if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+		let arg1 = substitute(arg1, '!', '\!', 'g')
+		let arg2 = v:fname_new
+		if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+		let arg2 = substitute(arg2, '!', '\!', 'g')
+		let arg3 = v:fname_out
+		if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+		let arg3 = substitute(arg3, '!', '\!', 'g')
+		if $VIMRUNTIME =~ ' '
+			if &sh =~ '\<cmd'
+				if empty(&shellxquote)
+					let l:shxq_sav = ''
+					set shellxquote&
+				endif
+				let cmd = '"' . $VIMRUNTIME . '\diff"'
+			else
+				let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+			endif
+		else
+			let cmd = $VIMRUNTIME . '\diff'
+		endif
+		let cmd = substitute(cmd, '!', '\!', 'g')
+		silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+		if exists('l:shxq_sav')
+			let &shellxquote=l:shxq_sav
+		endif
+	endfunction
+endif
+"}}}
+"  < 判断是终端还是 Gvim > {{{
+" -----------------------------------------------------------------------------
+let g:isGUI = 0
+if has("gui_running")
+	let g:isGUI = 1
 endif
 "}}}
 " < Gvim 专用设置 > {{{
@@ -303,6 +343,7 @@ iabbrev tihs this
 iabbrev cahr char
 iabbrev	pirnt print
 iabbrev retuen return
+iabbrev retrun return
 "个人常用信息
 iabbrev @@ icebggg@qq.com
 iabbrev @z //@hyf
@@ -409,7 +450,7 @@ augroup global
 
 augroup END
 " }}}
-" < FileType settings 也就是autocmd命令组具体化 > {{{
+" < FileType settings 也就是autocmd命令组的文件类型具体化 > {{{
 " -----------------------------------------------------------------------------
 augroup c_cpp__
 	autocmd!
@@ -482,14 +523,16 @@ augroup filetype_vim
 augroup END
 "}}}
 
-" < 插件vim-cpp-enhanced-highlight > {{{
+" < 插件vim-cpp-enhanced-highlight > 
+"{{{
 " -----------------------------------------------------------------------------
 let g:cpp_class_scope_highlight = 1 "类作用域的突出显示
 let g:cpp_member_variable_highlight = 1 "成员变量的突出显示
 let g:cpp_concepts_highlight = 1  "标准库的关键字 高亮
 "}}}
 
-" < 插件plug-vim > {{{
+" < 插件plug-vim > 
+"{{{
 " -----------------------------------------------------------------------------
 " Download plug.vim and put it in ~/.vim/autoload
 "在windows平台下这个名称是vimfiles，在unix类平台下是~/.vim
@@ -528,7 +571,6 @@ endfunc
 "			:tn						Jump to the next matching tag  下一个匹配
 "			:tp						Jump to the previous matching tag 上一个匹配
 "}}}
-
 " # <localleader>映射已经使用的快捷键说明----------{{{
 "+ c												"C"omment 注释
 " }}}
