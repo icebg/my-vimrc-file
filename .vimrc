@@ -1,29 +1,116 @@
-"C，C++ 按分号e编译运行
-noremap <Leader>e :call CompileRunGcc()<CR>
-func! CompileRunGcc()
-	exec "w"
-	if &filetype == 'c'
-		exec "!gcc -Wall -g  % -o %:r && ./%:r "  
-	elseif &filetype == 'cpp'
-		exec "!g++ -Wall -std=c++17  -g  % -o %:r && ./%:r "  
-	elseif &filetype == 'sh'
-		exec "!. %"	
-		"在当前bash执行此脚本
-	elseif &filetype == 'python'
-		exec "!python %"
-	endif
-endfunc
+"  < 判断操作系统是否是 Windows 还是 Linux >  {{{
+" -----------------------------------------------------------------------------
+let g:isWindows = 0
+let g:isLinux = 0
+if(has("win32") || has("win64") || has("win95") || has("win16"))
+	let g:isWindows = 1
+else
+	let g:isLinux = 1
+endif
 "}}}
-"-------------------以下与gvim和vim无关(上面的是我在linux上的设置，上面的不要变动。)----------------------
-"利用C:\Windows\ctags.exe在当前目录下生成详细tag文件的命令：ctags -R --languages=c++ --langmap=c++:+.inl -h +.inl --c++-kinds=+p+x-d --fields=+liaS --extras=+q
-"各个参数的解析，请看这个中文网站：https://www.cnblogs.com/coolworld/p/5602589.html
-" 以及这里 有中文帮助: https://blog.easwy.com/archives/exuberant-ctags-chinese-manual/
+"  < 判断是终端还是 Gvim > {{{
+" -----------------------------------------------------------------------------
+let g:isGUI = 0
+if has("gui_running")
+	let g:isGUI = 1
+endif
+"}}}
+" < Linux 专用设置 >  {{{
+" -----------------------------------------------------------------------------
+"C，C++ 按分号e编译运行
+if(isLinux)
+	noremap <Leader>e :call CompileRunGcc()<CR>
+	func! CompileRunGcc()
+		exec "w"
+		if &filetype == 'c'
+			exec "!gcc -Wall -g  % -o %:r && ./%:r "  
+		elseif &filetype == 'cpp'
+			exec "!g++ -Wall -std=c++17  -g  % -o %:r && ./%:r "  
+		elseif &filetype == 'sh'
+			"在当前bash执行此脚本
+			exec "!. %"	
+		elseif &filetype == 'python'
+			exec "!python %"
+		endif
+	endfunc
+endif
+"}}}
+" < Windows 专用设置 > {{{
+" -----------------------------------------------------------------------------
+if(isWindows)
+	"弄一弄windows下tag路径
+	set tags+=D:/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/tags
+	set tags+=D:/MinGW/mingw64/x86_64-w64-mingw32/include/tags
+	" window里刷LeetCode题
+	function! LeetCode()
+		" 这个c,cpp文件是新建的话，那就要做以下步骤 清空。
+		if file_readable(expand("%"))==0
+			if file_readable("initial_codes.cpp")&&file_readable("leetcode_script.vim")
+				silent source leetcode_script.vim
+			else
+				execute "normal ggdG"
+			endif
+		endif
+	endfunction
+	autocmd FileType c,cpp  call LeetCode()
+	"shell 采用 cmd
+	set shell=cmd
+	"C，C++ 按分号e编译运行 (生成exe)
+	noremap <Leader>e :call CompileRunGcc()<CR>
+	func! CompileRunGcc() "使用 cmd 作为shell
+		exec "w"
+		if &filetype == 'c'
+			exec "! gcc -Wall -g % -o %:r.exe  && echo ok && %:r.exe "
+		elseif &filetype == 'cpp'
+			exec "! g++ -Wall -std=c++17 -g % -o %:r.exe && echo ok. && %:r.exe "
+		elseif &filetype == 'sh'
+			exec "! bash %"
+			"在当前bash执行此脚本
+		elseif &filetype == 'python'
+			exec "!python %"
+		elseif &filetype == 'dosbatch'
+			exec "! %"
+		endif
+	endfunc
+endif
+"}}}
+" < Gvim 专用设置 > {{{
+" -----------------------------------------------------------------------------
+if(isGUI)
+	"弄一弄Gvim菜单栏的中文乱码
+	source $VIMRUNTIME/delmenu.vim
+	source $VIMRUNTIME/menu.vim
+
+	"启用GDB包,然后就能[ :Termdebug + 可执行程序名] .termdebug 是从 Vim 8.1 开始内置的调试插件，仅支持 GDB。
+	packadd termdebug 
+	nnoremap <F11> :call GDB()<CR>
+	func! GDB()
+		exec "Termdebug %:r"
+	endfunc
+	"分号sh 进入shell
+	noremap <Leader>sh :call IntoShell()<CR>
+	func! IntoShell()
+		exec "w"
+		exec "terminal"
+	endfunc
+	"Gvim行距 linespace
+	set linespace=4
+	colorscheme motus "设置配色方案，在~/.vim/colors/目录下提前放置molokai.vim.至于gvim我喜欢motus, ubuntu的vim我喜欢default,molokai，vsvim我喜欢web13234.vssettings
+	autocmd BufReadPost *.txt  execute ": colorscheme Autumn2"|setlocal linespace=10|setlocal expandtab
+	"set guioptions-=T "去掉工具栏
+	"set guioptions-=m "去掉菜单栏
+	set guifont=Cr.DejaVuSansMono.YaHei:h12
+endif
+"}}}
+
+"-------------------以下与gvim和vim无关----------------------------------------
 
 "目前我的vim个人配置文件
 "一般的映射，都写nore防止递归, 函数则写感叹号function!
 
 "映射 和 设置
-" Mappings映射(map)----------{{{
+" < Mappings映射(map) > {{{
+" -----------------------------------------------------------------------------
 "jj映射Esc
 inoremap jj <Esc>	
 "热键Leader定为'分号'。
@@ -115,13 +202,14 @@ nnoremap <silent><Tab>p :tabprevious<CR>	"上一个标签页
 nnoremap <silent><s-tab> :tabprevious<CR>	"上一个标签页
 inoremap <silent><s-tab> <Esc>:tabprevious<CR>	
 " }}}
-" Basic Settings基础设置(set)----------{{{
+" < Basic Settings基础设置(set) >  {{{
+" -----------------------------------------------------------------------------
 set encoding=utf-8
 set nocompatible  "去掉讨厌的有关vi兼容模式，避免以前版本的一些bug和局限
 set showcmd	"输入的命令显示出来，看的清楚些"
 set showmatch "开启高亮显示匹配括号"
 set showmode "显示当前处于哪种模式
-colorscheme molokai "设置配色方案，在~/.vim/colors/目录下提前放置molokai.vim.至于gvim我喜欢motus, ubuntu的vim我喜欢default,molokai，vsvim我喜欢web13234.vssettings
+colorscheme motus "设置配色方案，在~/.vim/colors/目录下提前放置molokai.vim.至于gvim我喜欢motus, ubuntu的vim我喜欢default,molokai，vsvim我喜欢web13234.vssettings
 set laststatus=2 "显示状态栏
 set number	"显示行号
 set cursorline  " 突出显示当前行
@@ -164,7 +252,8 @@ set autoread	"打开文件监视。如果在编辑过程中文件发生外部改
 set timeoutlen=500	"以毫秒计的,等待键码或映射的键序列完成的时间
 set tags+=/usr/include/tags
 " }}}
-" Status Line ----------{{{
+" < Status Line > {{{
+" -----------------------------------------------------------------------------
 "set statusline=%F         " 文件的路径
 "set statusline+=\ --\      " 分隔符
 "set statusline+=FileType: " 标签
@@ -202,7 +291,8 @@ set statusline+=\ [asc_hex=%02.2B] "ASCII_hex
 set statusline+=\ [pos=%04l,%04v][%p%%] "position
 set statusline+=\ [len=%L] "lenth of lines
 " }}}
-"abbreviate缩写替换----------{{{
+" < abbreviate缩写替换 > {{{
+" -----------------------------------------------------------------------------
 "替换内容纠正笔误，如果想取消替换，那么iunabbrev main(即修正后的单词) 
 iabbrev mian main 
 iabbrev eixt exit 
@@ -234,7 +324,8 @@ nnoremap <localleader>} viW<esc>a}<esc>hBi{<esc>E
 " }}}
 
 "自动命令组
-" autocmd 命令组 global设置----------{{{
+" < autocmd 命令组 global设置 > {{{
+" -----------------------------------------------------------------------------
 augroup global
 	autocmd!
 	"打开任何类型的文件时，自动缩进。(BufNewFile表示即使这个文件不存在，也创建并保存到硬盘)
@@ -318,12 +409,17 @@ augroup global
 
 augroup END
 " }}}
-" FileType settings 也就是autocmd命令组具体化----------{{{
+" < FileType settings 也就是autocmd命令组具体化 > {{{
+" -----------------------------------------------------------------------------
 augroup c_cpp__
 	autocmd!
 	autocmd FileType c,cpp setlocal tabstop=4|setlocal shiftwidth=4|setlocal softtabstop=4|setlocal noexpandtab
-	"makeprg参数设置以后，:make将执行这个语句，且可以用:cw打开错误信息、:cn等跳转到下一个错误
-	autocmd FileType c,cpp setlocal makeprg=g++\ -Wall\ -g\ -o\ %:r.exe\ %
+	"makeprg参数设置以后，:make将执行这个语句，且可以用:cw打开错误信息、:cn跳转到下一个错误、:cp跳转到上一个
+	if(isWindows)
+		autocmd FileType c,cpp setlocal makeprg=g++\ -Wall\ -std=c++17\ -g\ -o\ %:r.exe\ 
+	else
+		autocmd FileType c,cpp setlocal makeprg=g++\ -Wall\ -std=c++17\ -g\ -o\ %:r\ 
+	endif
 	autocmd FileType c,cpp setlocal cindent
 	"autocmd FileType c,cpp setlocal foldmethod=marker | setlocal foldmarker=@hyf,fyh@ "手动
 	autocmd FileType c,cpp setlocal foldmethod=marker
@@ -334,19 +430,14 @@ augroup c_cpp__
 	autocmd FileType cpp iabbrev <buffer>		yfpp #include<cstdio><cr>#include<cmath><cr>#include<iostream><cr>int main()<cr>{<cr>using std::cout;<cr>return 0;<cr>}<esc>kO<esc>i   
 
 	autocmd FileType c,cpp iabbrev <buffer>		ifndef #ifndef<cr>#define<cr>#endif
-	autocmd FileType c,cpp iabbrev <buffer>		fori for(int i=0;i<;++i)<cr>{<cr>}<esc>O
-	autocmd FileType c,cpp iabbrev <buffer>		forj for(int j=0;j<;++j)<cr>{<cr>}<esc>O
+	autocmd FileType c,cpp iabbrev <buffer>		fori for(int i=0;i<m;++i)<cr>{<cr>}<esc>O
+	autocmd FileType c,cpp iabbrev <buffer>		forj for(int j=0;j<n;++j)<cr>{<cr>}<esc>O
 	autocmd FileType c,cpp iabbrev <buffer>		structt struct<cr>{<cr>};<esc>O<esc>i   
 	autocmd FileType c,cpp iabbrev <buffer>		printt printf("",);<left><left><left>
 	autocmd FileType c,cpp iabbrev <buffer>		scann scanf("",);
 	autocmd FileType c,cpp iabbrev <buffer>		switchh switch(VALUE)<cr>{<cr>case 0:<cr>break;<cr>case 1:<cr>case 2:<cr>break;<cr>default:<cr>break;<cr>}
 	autocmd FileType c,cpp iabbrev <buffer>		iff if( )<left><left>
 	autocmd FileType cpp iabbrev <buffer>		coutt cout<<<cr><cr><<endl;<esc>ki<tab>   
-
-	"PoinT_To
-	autocmd FileType c,cpp iabbrev <buffer>		ptt ->next
-	"PointNeXt
-	autocmd FileType c,cpp iabbrev <buffer>		pnx ->next
 
 	"c,cpp注释(comment)快捷键：-c
 	autocmd FileType c,cpp nnoremap <buffer> <localleader>c I//<esc>
@@ -376,73 +467,37 @@ augroup shell_
 	autocmd FileType sh iabbrev <buffer> iff if []; then<cr><cr>fi<esc>2kf]i
 augroup END
 " }}}
-" Vimscript file settings ----------{{{
+" < Vimscript file settings > {{{
+" -----------------------------------------------------------------------------
 augroup filetype_vim
 	autocmd!
 	"设置折叠
 	autocmd FileType vim setlocal foldmethod=marker
 	"打开文件时全部折叠
 	autocmd BufReadPre *vimrc* setlocal foldlevelstart=0
-	autocmd BufWritePost $MYVIMRC source $MYVIMRC    "保存的时候，让 vimrc 配置变更立即生效
+	"保存的时候，让 vimrc 配置变更立即生效
+	autocmd BufWritePost $MYVIMRC source $MYVIMRC    
+	"vimrc 注释一行快捷键
 	autocmd FileType vim nnoremap <buffer> <localleader>c I"<esc>
 augroup END
-" }}}
-" gui_running----------{{{
-if(has("gui_running"))
-	packadd termdebug "启用GDB包,然后就能[ :Termdebug + 可执行程序名] .termdebug 是从 Vim 8.1 开始内置的调试插件，仅支持 GDB。
-	" termdebug 是从 Vim 8.1 开始内置的调试插件，仅支持 GDB。
-	nnoremap <F11> :call GDB()<CR>
-	func! GDB()
-		exec "Termdebug %:r"
-	endfunc
-	"分号sh 进入shell
-	noremap <Leader>sh :call IntoShell()<CR>
-	func! IntoShell()
-		exec "w"
-		exec "terminal"
-	endfunc
-	"行距 linespace
-	set linespace=4
-	colorscheme motus "设置配色方案，在~/.vim/colors/目录下提前放置molokai.vim.至于gvim我喜欢motus, ubuntu的vim我喜欢default,molokai，vsvim我喜欢web13234.vssettings
-	autocmd BufReadPost *.txt  execute ": colorscheme Autumn2"|setlocal linespace=10|setlocal expandtab
-	"set guioptions-=T "去掉工具栏
-	"set guioptions-=m "去掉菜单栏
-	if(has("win32") || has("win95") || has("win64") || has("win7") || has("win10"))
-		source $VIMRUNTIME/delmenu.vim
-		source $VIMRUNTIME/menu.vim
-
-		set tags+=D:/MinGW/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/tags
-		set tags+=D:/MinGW/mingw64/x86_64-w64-mingw32/include/tags
-		function! LeetCode()
-			" 这个c,cpp文件是新建的话，那就要做以下步骤 清空。
-			if file_readable(expand("%"))==0
-				if file_readable("initial_codes.cpp")&&file_readable("leetcode_script.vim")
-					silent source leetcode_script.vim
-				else
-					execute "normal ggdG"
-				endif
-			endif
-		endfunction
-		autocmd FileType c,cpp  call LeetCode()
-	endif
-	set guifont=Cr.DejaVuSansMono.YaHei:h12
-endif
 "}}}
 
-"插件vim-cpp-enhanced-highlight
+" < 插件vim-cpp-enhanced-highlight > {{{
+" -----------------------------------------------------------------------------
 let g:cpp_class_scope_highlight = 1 "类作用域的突出显示
 let g:cpp_member_variable_highlight = 1 "成员变量的突出显示
 let g:cpp_concepts_highlight = 1  "标准库的关键字 高亮
+"}}}
 
-"插件plug-vim {{{
+" < 插件plug-vim > {{{
+" -----------------------------------------------------------------------------
 " Download plug.vim and put it in ~/.vim/autoload
 "在windows平台下这个名称是vimfiles，在unix类平台下是~/.vim
-"   curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-"     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+"   curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 call plug#begin('~/vimfiles/plugged') "这里规定安装目录,中间各行代表获取的插件
-"高亮 类，成员函数，标准库和模板
+"vim-cpp-enhanced-highlight高亮 类，成员函数，标准库和模板
 Plug 'octol/vim-cpp-enhanced-highlight'
-"查看函数原型, 则可以通过按键"Alt+ -"和"Alt+ =“向前和向后翻页查看重载版本
+"echofunc查看函数原型, 则可以通过按键"Alt+ -"和"Alt+ =“向前和向后翻页查看重载版本
 Plug 'mbbill/echofunc'
 call plug#end()
 "----------------------------------------
@@ -458,7 +513,12 @@ endfunc
 "}}}
 
 "这下面是笔记，或者是教程
-" # vim ctags cheatsheet {{{
+" # < vim ctags cheatsheet > {{{
+" -----------------------------------------------------------------------------
+"利用C:\Windows\ctags.exe在当前目录下生成详细tag文件的命令：ctags -R --languages=c++ --langmap=c++:+.inl -h +.inl --c++-kinds=+p+x-d --fields=+liaS --extras=+q
+"各个参数的解析，请看这个中文网站：https://www.cnblogs.com/coolworld/p/5602589.html
+" 以及这里 有中文帮助: https://blog.easwy.com/archives/exuberant-ctags-chinese-manual/
+"
 "			Command					Function
 "-----------------------------------------------------------------------------
 "			Ctrl + ]				Go to definition 跳转到定义
@@ -469,10 +529,10 @@ endfunc
 "			:tp						Jump to the previous matching tag 上一个匹配
 "}}}
 
-" <localleader>映射已经使用的快捷键说明----------{{{
+" # <localleader>映射已经使用的快捷键说明----------{{{
 "+ c												"C"omment 注释
 " }}}
-" <Leader>映射已经使用的快捷键说明(a-z)----------{{{
+" # <Leader>映射已经使用的快捷键说明(a-z)----------{{{
 "+ 1 2 3 4 5 6 7 8 9 0                              访问第几个tab标签页
 "+ a												"A"ll selected
 "+ bd												"B"uffer "D"elete
@@ -512,4 +572,3 @@ endfunc
 "+ <left>										
 "+ <right>											水平方向增大窗口
 " }}}
-
