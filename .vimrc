@@ -1,4 +1,3 @@
-
 "C，C++ 按分号e编译运行
 noremap <Leader>e :call CompileRunGcc()<CR>
 func! CompileRunGcc()
