@@ -111,12 +111,16 @@ endif
 " -----------------------------------------------------------------------------
 let g:isGUI = 0
 if has("gui_running")
+	"Gvim下的配置
 	let g:isGUI = 1
 endif
 "}}}
 " < Gvim 专用设置 > {{{
 " -----------------------------------------------------------------------------
 if(isGUI)
+	"Gvim下的配置 
+	"Gvim 安装路径下的 _vimrc文件，优先级比不上 "~/.vimrc文件，
+	"但若是 C:/Users/icebg下不存在.vimrc , 那么 echo $MYVIMRC 就会打印出 D:\Program Files（x86）\Vim
 	"弄一弄Gvim菜单栏的中文乱码
 	source $VIMRUNTIME/delmenu.vim
 	source $VIMRUNTIME/menu.vim
@@ -135,11 +139,15 @@ if(isGUI)
 	endfunc
 	"Gvim行距 linespace
 	set linespace=4
-	colorscheme motus "设置配色方案，在~/.vim/colors/目录下提前放置molokai.vim.至于gvim我喜欢motus, ubuntu的vim我喜欢default,molokai，vsvim我喜欢web13234.vssettings
+	"设置配色方案，在~/.vim/colors/目录下提前放置molokai.vim.至于gvim我喜欢motus, ubuntu的vim我喜欢default,molokai，vsvim我喜欢web13234.vssettings
+	colorscheme motus 
 	autocmd BufReadPost *.txt  execute ": colorscheme Autumn2"|setlocal linespace=10|setlocal expandtab
 	"set guioptions-=T "去掉工具栏
 	"set guioptions-=m "去掉菜单栏
 	set guifont=Cr.DejaVuSansMono.YaHei:h12
+else
+	"终端vim下的配置
+	colorscheme molokai "设置配色方案，在~/.vim/colors/目录下提前放置molokai.vim.至于gvim我喜欢motus, ubuntu的vim我喜欢default,molokai，vsvim我喜欢web13234.vssettings
 endif
 "}}}
 
@@ -148,7 +156,7 @@ endif
 "目前我的vim个人配置文件
 "一般的映射，都写nore防止递归, 函数则写感叹号function!
 
-"映射 和设置
+"映射 和 设置
 " < Mappings映射(map) > {{{
 " -----------------------------------------------------------------------------
 "jj映射Esc
@@ -574,7 +582,7 @@ endfunc
 " # <localleader>映射已经使用的快捷键说明----------{{{
 "+ c												"C"omment 注释
 " }}}
-" # <Leader>映射已经使用的快捷键说明(a-z)----------{{{
+" # <Leader>映射已经使用的快捷键说明(a-z) {{{
 "+ 1 2 3 4 5 6 7 8 9 0                              访问第几个tab标签页
 "+ a												"A"ll selected
 "+ bd												"B"uffer "D"elete
@@ -614,3 +622,9 @@ endfunc
 "+ <left>										
 "+ <right>											水平方向增大窗口
 " }}}
+
+" # <终端的vim 配色方案笔记> {{{
+" lucius.vim     亮 txt
+" herald.vim     暗
+" molokai.vim    暗
+"}}}
