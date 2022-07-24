@@ -140,7 +140,7 @@ if(isGUI)
 	"Gvim行距 linespace
 	set linespace=4
 	"设置配色方案，在~/.vim/colors/目录下提前放置molokai.vim.至于gvim我喜欢motus, ubuntu的vim我喜欢default,molokai，vsvim我喜欢web13234.vssettings
-	colorscheme motus 
+	colorscheme motus
 	autocmd BufReadPost *.txt  execute ": colorscheme Autumn2"|setlocal linespace=10|setlocal expandtab
 	"set guioptions-=T "去掉工具栏
 	"set guioptions-=m "去掉菜单栏
@@ -257,7 +257,6 @@ set nocompatible  "去掉讨厌的有关vi兼容模式，避免以前版本的�
 set showcmd	"输入的命令显示出来，看的清楚些"
 set showmatch "开启高亮显示匹配括号"
 set showmode "显示当前处于哪种模式
-colorscheme motus "设置配色方案，在~/.vim/colors/目录下提前放置molokai.vim.至于gvim我喜欢motus, ubuntu的vim我喜欢default,molokai，vsvim我喜欢web13234.vssettings
 set laststatus=2 "显示状态栏
 set number	"显示行号
 set cursorline  " 突出显示当前行
@@ -465,9 +464,9 @@ augroup c_cpp__
 	autocmd FileType c,cpp setlocal tabstop=4|setlocal shiftwidth=4|setlocal softtabstop=4|setlocal noexpandtab
 	"makeprg参数设置以后，:make将执行这个语句，且可以用:cw打开错误信息、:cn跳转到下一个错误、:cp跳转到上一个
 	if(isWindows)
-		autocmd FileType c,cpp setlocal makeprg=g++\ -Wall\ -std=c++17\ -g\ -o\ %:r.exe\ 
+		autocmd FileType c,cpp setlocal makeprg=g++\ %\ -Wall\ -std=c++17\ -g\ -o\ %:r.exe\ 
 	else
-		autocmd FileType c,cpp setlocal makeprg=g++\ -Wall\ -std=c++17\ -g\ -o\ %:r\ 
+		autocmd FileType c,cpp setlocal makeprg=g++\ %\ -Wall\ -std=c++17\ -g\ -o\ %:r\ 
 	endif
 	autocmd FileType c,cpp setlocal cindent
 	"autocmd FileType c,cpp setlocal foldmethod=marker | setlocal foldmarker=@hyf,fyh@ "手动
