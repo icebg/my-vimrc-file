@@ -214,6 +214,9 @@ func! Ctag()
         exec "silent :!ctags -R --c++-kinds=+p+x+d --fields=+liaS --extras=+q" 
     endif
 endfunc
+" 使用;v快捷键粘贴 "+" 寄存器内容---也就是 Win系统粘贴板
+nnoremap <Leader>v "+p 
+inoremap <Leader>v <ESC>"+pa
 " 使用;w快捷键保存内容
 nnoremap <Leader>w :w<CR>
 inoremap <Leader>w <ESC>:w<CR>
@@ -593,6 +596,8 @@ endfunc
 "    ]]             跳到后一个文件
 "    q              关闭taglist窗口
 "    <F1>           显示帮助 
+let Tlist_Use_Right_Window = 1          "在右侧窗口中显示taglist窗口 
+let Tlist_File_Fold_Auto_Close = 1      "当同时显示多个文件中的tag时，可使taglist只显示当前文件tag，其它文件的tag都被折叠起来
 "}}}
 
 " < 插件vim-cpp-enhanced-highlight >   :给cpp语法上色
@@ -612,44 +617,44 @@ let g:cpp_concepts_highlight = 1  "标准库的关键字 高亮
 " # <Leader>映射已经使用的快捷键说明(a-z) 
 "{{{
 " -----------------------------------------------------------------------------
-"    + 1 2 3 4 5 6 7 8 9 0                              访问第几个tab标签页
-"    + a                                                "A"ll selected
-"    + bd                                                "B"uffer "D"elete
-"    + bo                                                 "B"uffer "O"nly 
-"    + cv                                                "C"hange "V"imrc
+"    + 1 2 3 4 5 6 7 8 9 0              访问第几个tab标签页
+"    + a                                "A"ll selected
+"    + bd                               "B"uffer "D"elete
+"    + bo                               "B"uffer "O"nly 
+"    + cv                               "C"hange "V"imrc
 "    + 
-"    + e                                                "E"xecute (编译执行) 函数
+"    + e                                "E"xecute (编译执行) 函数
 "    +
 "    +
 "    +
 "    +
 "    +
-"    +
-"    +
-"    + 
 "    +
 "    +
 "    + 
 "    +
 "    +
-"    +
-"    + obj                                                "Obj"Dump
-"    + p                                                "P"aste mode
-"    + <leader>p                                        no "P"aste mode
-"    + q                                                "Q"uit vim
-"    + <leader>q                                        force "Q"uit
+"    + 
 "    +
 "    +
-"    + sh                                                "Sh"ell 函数
-"    + sv                                                "S"oure "V"imrc
-"    + tag                                                 "Ctag" 函数
+"    +
+"    + obj                              "Obj"Dump
+"    + p                                "P"aste mode
+"    + <leader>p                        no "P"aste mode
+"    + q                                "Q"uit vim
+"    + <leader>q                        force "Q"uit
 "    +
 "    +
-"    + w                                                "W"rite
-"    + <up>                                                竖直方向增大窗口
+"    + sh                               "Sh"ell 函数
+"    + sv                               "S"oure "V"imrc
+"    + tag                              "Ctag" 函数
+"    +
+"    + v                                以 ;v 完成类似Ctrl+ "V" 的粘贴操作
+"    + w                                "W"rite
+"    + <up>                             竖直方向增大窗口
 "    + <down>                                            
 "    + <left>                                        
-"    + <right>                                            水平方向增大窗口
+"    + <right>                          水平方向增大窗口
 "}}}
 
 " # <终端的vim 配色方案笔记> 
